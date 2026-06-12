@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Data Inventory Dashboard</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Segoe UI, Arial, sans-serif;
+}
+
+body{
+    background:#f5f7fb;
+    padding:20px;
+}
+
+.header{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,.1);
+    margin-bottom:20px;
+}
+
+.header h1{
+    color:#1f2937;
+}
+
+.summary{
+    display:flex;
+    gap:20px;
+    margin-top:15px;
+    flex-wrap:wrap;
+}
+
+.card{
+    background:#2563eb;
+    color:white;
+    padding:15px;
+    min-width:200px;
+    border-radius:10px;
+}
+
+.card .value{
+    font-size:24px;
+    font-weight:bold;
+}
+
+.toolbar{
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.search-box{
+    width:350px;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:6px;
+}
+
+.btn{
+    background:#16a34a;
+    color:white;
+    border:none;
+    padding:10px 20px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.btn:hover{
+    background:#15803d;
+}
+
+.table-container{
+    background:white;
+    border-radius:10px;
+    overflow:auto;
+    box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+thead{
+    background:#1e40af;
+    color:white;
+}
+
+th,td{
+    padding:12px;
+    border-bottom:1px solid #e5e7eb;
+    text-align:left;
+}
+
+tbody tr:hover{
+    background:#f8fafc;
+}
+
+.status-ok{
+    color:green;
+    font-weight:bold;
+}
+
+.status-warning{
+    color:red;
+    font-weight:bold;
+}
+
+.footer{
+    margin-top:20px;
+    text-align:center;
+    color:#666;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="header">
+
+    <h1>📊 Data Inventory Dashboard</h1>
+
+    <div class="summary">
+
+        <div class="card">
+            <div>Total Datasets</div>
+            <div class="value">{{ total_datasets }}</div>
+        </div>
+
+        <div class="card">
+            <div>Total Files</div>
+            <div class="value">{{ total_files }}</div>
+        </div>
+
+        <div class="card">
+            <div>Last Updated</div>
+            <div class="value" style="font-size:16px">
+                {{ last_updated }}
+            </div>
+        </div>
+<div class="card">
+    <div>Next Scan</div>
+    <div class="value" style="font-size:16px">
+        {{ next_run }}
+    </div>
+</div>
+    </div>
+
+</div>
+
+<div class="toolbar">
+
+    <input
+        type="text"
+        id="searchInput"
+        class="search-box"
+        placeholder="Search Dataset..."
+    >
+
+    <button
+    class="btn"
+    onclick="window.location='/scan';"
+>
+    🔄 Run Scan
+</button>
+
+</div>
+
+<div class="table-container">
+
+<table id="inventoryTable">
+
+    <thead>
+        <tr>
+            <th>Folder 1</th>
+            <th>Folder 2</th>
+            <th>Folder 3</th>
+            <th>From Date</th>
+            <th>To Date</th>
+            <th>No Of Files</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+    {% for row in data %}
+
+    <tr>
+
+        <td>{{ row.folder1 }}</td>
+
+        <td>{{ row.folder2 }}</td>
+
+        <td>{{ row.folder3 }}</td>
+
+        <td>{{ row.from_date }}</td>
+
+        <td>{{ row.to_date }}</td>
+
+        <td>{{ row.file_count }}</td>
+
+        <td>
+            {% if row.file_count > 0 %}
+                <span class="status-ok">AVAILABLE</span>
+            {% else %}
+                <span class="status-warning">NO FILES</span>
+            {% endif %}
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+</div>
+
+<div class="footer">
+
+    Data Inventory Monitoring System
+
+</div>
+
+<script>
+
+const searchInput =
+document.getElementById("searchInput");
+
+searchInput.addEventListener("keyup", function() {
+
+    const filter =
+    this.value.toLowerCase();
+
+    const rows =
+    document.querySelectorAll(
+        "#inventoryTable tbody tr"
+    );
+
+    rows.forEach(row => {
+
+        const text =
+        row.innerText.toLowerCase();
+
+        row.style.display =
+            text.includes(filter)
+            ? ""
+            : "none";
+
+    });
+
+});
+
+setInterval(() => {
+    location.reload();
+}, 60000);
+
+</script>
+
+</body>
+</html>

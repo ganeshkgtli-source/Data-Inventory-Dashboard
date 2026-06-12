@@ -1,0 +1,58 @@
+# Python
+
+**pycache**/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environment
+
+venv/
+.env
+
+# SQLite Database
+
+inventory.db
+*.db
+
+# Logs
+
+logs/
+*.log
+
+# Generated Reports
+
+reports/
+*.xlsx
+
+# Generated Dashboard Excel
+
+Data_Inventory_Dashboard.xlsx
+
+# PyInstaller
+
+build/
+dist/
+*.spec
+
+# VS Code
+
+.vscode/
+
+# JetBrains
+
+.idea/
+
+# Windows
+
+Thumbs.db
+Desktop.ini
+
+# OS Files
+
+.DS_Store
+
+# Temporary Files
+
+*.tmp
+*.bak
