@@ -19,8 +19,8 @@ if getattr(sys, 'frozen', False):
 else:
     BASE_DIR = Path(__file__).resolve().parent
 
-CONFIG_FILE = BASE_DIR / "config_formatted.json"
-DATABASE_FILE = BASE_DIR / "inventory_formatted.db"
+CONFIG_FILE = BASE_DIR / "config_raw.json"
+DATABASE_FILE = BASE_DIR / "inventory_raw.db"
 REPORTS_DIR = BASE_DIR / "reports"
 LOGS_DIR = BASE_DIR / "logs"
 
@@ -53,23 +53,25 @@ def create_database():
 
     conn.execute("""
         CREATE TABLE IF NOT EXISTS inventory
-        (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-            folder1 TEXT,
-            folder2 TEXT,
-            folder3 TEXT,
-            file_name TEXT,
-            full_path TEXT,
+    folder1 TEXT,
+    folder2 TEXT,
+    folder3 TEXT,
 
-            from_date TEXT,
-            to_date TEXT,
+    file_name TEXT,
 
-            file_count INTEGER,
-            status TEXT,
+    full_path TEXT,
 
-            last_updated TEXT
-        )
+    from_date TEXT,
+    to_date TEXT,
+
+    file_count INTEGER,
+    status TEXT,
+
+    last_updated TEXT
+)
     """)
 
     conn.commit()
@@ -119,20 +121,33 @@ def scan_dataset(root_folder, dataset):
     folder1 = dataset["folder1"]
     folder2 = dataset["folder2"]
     folder3 = dataset.get("folder3", "")
-    file_name = dataset.get(
-    "file_name_pattern",
-    ""
-)
 
-    file_pattern = dataset.get("file_pattern", "*.csv")
-    folder_path = Path(root_folder) / folder1 / folder2
+    physical_folder = dataset.get(
+        "physical_folder",
+        folder3
+    )
 
-    if folder3:
-        folder_path = folder_path / folder3
+    file_pattern = dataset.get(
+        "file_pattern",
+        "*.csv"
+    )
 
-    
+    logger.info(
+        f"Scanning: {folder1}/{folder2}/{physical_folder}"
+    )
 
-    logger.info(f"Scanning: {folder_path}")
+    folder_path = (
+        Path(root_folder)
+        / folder1
+        / folder2
+    )
+
+    if physical_folder:
+        folder_path = folder_path / physical_folder
+
+    logger.info(
+        f"Scanning Path: {folder_path}"
+    )
 
     if not folder_path.exists():
 
@@ -144,41 +159,91 @@ def scan_dataset(root_folder, dataset):
             "folder1": folder1,
             "folder2": folder2,
             "folder3": folder3,
-            "file_name": file_name,
+
+            "file_name": dataset.get(
+                "file_name_pattern",
+                ""
+            ),
+
             "full_path": str(folder_path),
+
             "from_date": "",
             "to_date": "",
+
             "file_count": 0,
+
             "status": "NO FILES"
         }
 
-    files = list(folder_path.rglob(file_pattern))
+    files = list(
+        folder_path.rglob(file_pattern)
+    )
 
     all_dates = []
 
     for file in files:
 
-        extracted = extract_date(file.name)
+        extracted = extract_date(
+            file.name
+        )
 
         if extracted:
             all_dates.extend(extracted)
 
-    all_dates = sorted(set(all_dates))
+    all_dates = sorted(
+        set(all_dates)
+    )
 
-    from_date = all_dates[0] if all_dates else ""
-    to_date = all_dates[-1] if all_dates else ""
+    from_date = (
+        all_dates[0]
+        if all_dates else ""
+    )
+
+    to_date = (
+        all_dates[-1]
+        if all_dates else ""
+    )
+
+    # -----------------------------------------
+    # Fixed date override
+    # -----------------------------------------
+
+    if dataset.get("from_date_fixed"):
+
+        from_date = dataset[
+            "from_date_fixed"
+        ]
+
+    if dataset.get("to_date_fixed"):
+
+        to_date = dataset[
+            "to_date_fixed"
+        ]
 
     result = {
-    "folder1": folder1,
-    "folder2": folder2,
-    "folder3": folder3,
-    "file_name": file_name,
-    "full_path": str(folder_path),
-    "from_date": from_date,
-    "to_date": to_date,
-    "file_count": len(files),
-    "status": "AVAILABLE" if len(files) > 0 else "NO FILES"
-}
+
+        "folder1": folder1,
+        "folder2": folder2,
+        "folder3": folder3,
+
+        "file_name": dataset.get(
+            "file_name_pattern",
+            ""
+        ),
+
+        "full_path": str(folder_path),
+
+        "from_date": from_date,
+        "to_date": to_date,
+
+        "file_count": len(files),
+
+        "status": (
+            "AVAILABLE"
+            if len(files) > 0
+            else "NO FILES"
+        )
+    }
 
     logger.info(
         f"{folder2}/{folder3} | "
@@ -188,7 +253,6 @@ def scan_dataset(root_folder, dataset):
     )
 
     return result
-
 # ============================================================
 # SAVE TO SQLITE
 # ============================================================
@@ -217,17 +281,17 @@ def save_excel(df):
 
     daily_excel_file = (
         REPORTS_DIR
-        / f"Formatted_Inventory_Report_{datetime.now():%Y%m%d}.xlsx"
+        / f"Raw_Inventory_Report_{datetime.now():%Y%m%d}.xlsx"
     )
 
     latest_excel_file = Path(
-        r"G:\Ganesh\Data_Inventory_Formatted.xlsx"
+        r"G:\Ganesh\Data_Inventory_Raw.xlsx"
     )
 
     excel_df = df.copy()
 
     # ==========================================
-    # Rename Columns
+    # RENAME COLUMNS
     # ==========================================
 
     excel_df = excel_df.rename(
@@ -235,29 +299,22 @@ def save_excel(df):
             "folder1": "01_FOLDER NAME",
             "folder2": "02_FOLDER NAME",
             "folder3": "03_FOLDER NAME",
+
             "file_name": "04_FILE NAME",
+
             "from_date": "FROM DATE",
             "to_date": "TO DATE",
+
             "file_count": "NO OF FILES",
+
             "status": "STATUS",
+
             "last_updated": "LAST UPDATED"
         }
     )
 
     # ==========================================
-    # Date Formatting
-    # ==========================================
-
-    for col in ["FROM DATE", "TO DATE"]:
-
-        excel_df[col] = pd.to_datetime(
-            excel_df[col],
-            format="%Y%m%d",
-            errors="coerce"
-        ).dt.strftime("%d-%m-%Y")
-
-    # ==========================================
-    # Keep Only Required Columns
+    # KEEP ONLY REQUIRED COLUMNS
     # ==========================================
 
     excel_df = excel_df[
@@ -275,7 +332,19 @@ def save_excel(df):
     ]
 
     # ==========================================
-    # Daily Historical Report
+    # DATE FORMAT
+    # ==========================================
+
+    for col in ["FROM DATE", "TO DATE"]:
+
+        excel_df[col] = pd.to_datetime(
+            excel_df[col],
+            format="%Y%m%d",
+            errors="coerce"
+        ).dt.strftime("%d-%m-%Y")
+
+    # ==========================================
+    # DAILY REPORT
     # ==========================================
 
     with pd.ExcelWriter(
@@ -294,7 +363,7 @@ def save_excel(df):
     )
 
     # ==========================================
-    # Latest Report
+    # LATEST REPORT
     # ==========================================
 
     try:
@@ -317,7 +386,7 @@ def save_excel(df):
     except PermissionError:
 
         logger.warning(
-            "Data_Inventory_Formatted.xlsx is currently open."
+            f"{latest_excel_file} is open."
         )
 # ============================================================
 # MAIN
@@ -370,33 +439,49 @@ def main():
     new_files = df.loc[
         df["to_date"] != "20170331",
         "file_count"
-    ].sum()
+].sum()
 
     trading_days = pd.DataFrame([
-            {
+    {
         "folder1": "TRADING DAYS_OLD",
         "folder2": "",
         "folder3": "",
-        "file_name": "TD_OLD_19970401_20170331",
-        "full_path": "",
-            "from_date": "19970401",
-            "to_date": "20170331",
-            "file_count": old_files,
-            "status": "AVAILABLE"
-        },
-        {
-    "folder1": "TRADING DAYS_NEW",
-    "folder2": "",
-    "folder3": "",
-    "file_name": f"TD_NEW_20170401_{datetime.now():%Y%m%d}",
-    "full_path": "",
-            "from_date": "20170401",
-            "to_date": datetime.now().strftime("%Y%m%d"),
-            "file_count": new_files,
-            "status": "AVAILABLE"
-        }
-    ])
 
+        "file_name":
+            "TD_OLD_19970401_20170331",
+
+        "full_path": "",
+
+        "from_date": "19970401",
+        "to_date": "20170331",
+
+        "file_count": old_files,
+
+        "status": "AVAILABLE"
+    },
+
+    {
+        "folder1": "TRADING DAYS_NEW",
+        "folder2": "",
+        "folder3": "",
+
+        "file_name":
+            f"TD_NEW_20170401_{datetime.now():%Y%m%d}",
+
+        "full_path": "",
+
+        "from_date": "20170401",
+
+        "to_date":
+            datetime.now().strftime(
+                "%Y%m%d"
+            ),
+
+        "file_count": new_files,
+
+        "status": "AVAILABLE"
+    }
+])
     df = pd.concat(
         [trading_days, df],
         ignore_index=True

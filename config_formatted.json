@@ -1,0 +1,77 @@
+{
+  "root_folder": "H:/DATA/FOLDERS/DATA PROJECTS/FORMATTED FILES",
+
+  "datasets": [
+
+    {
+      "folder1": "01_BSE_CM",
+      "folder2": "BSE_CM_INDICES",
+      "folder3": "1_MIN_EOD",
+      "file_name_pattern": "BSE_CM_INDICES_1M_EOD_YYYYMMDD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "02_BSE_FNO",
+      "folder2": "BSE_FNO_INDICES",
+      "folder3": "1_MIN_EOD",
+      "file_name_pattern": "BSE_FNO_INDICES_1M_EOD_YYYYMMDD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "03_NSE_CM",
+      "folder2": "NSE_CM_INDICES",
+      "folder3": "1_MIN_EOD",
+      "file_name_pattern": "NSE_CM_INDICES_1M_EOD_YYYYMMDD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "03_NSE_CM",
+      "folder2": "NSE_CM_INDICES",
+      "folder3": "EOD",
+      "file_name_pattern": "NSE_CM_INDICES_EOD_YYYYMMDD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "03_NSE_CM",
+      "folder2": "NSE_CM_STOCKS",
+      "folder3": "1_MIN_EOD",
+      "file_name_pattern": "NSE_CM_STOCKS_1M_EOD_YYYYMMDD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "03_NSE_CM",
+      "folder2": "NSE_CM_STOCKS",
+      "folder3": "EOD",
+      "file_name_pattern": "NSE_CM_STOCKS_EOD_YYYYMMDD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "04_NSE_FNO",
+      "folder2": "NSE_FNO_INDICES",
+      "folder3": "1_MIN_EOD",
+      "file_name_pattern": "NSE_FNO_INDICES_1M_EOD_YYYYMMDD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "04_NSE_FNO",
+      "folder2": "NSE_FNO_STOCKS",
+      "folder3": "1_MIN_EOD",
+      "file_name_pattern": "NSE_FNO_STOCKS_1M_EOD_YYYYMMDD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "05_MCX",
+      "folder2": "1_MIN",
+      "file_name_pattern": "MCX_1M_EOD_YYYYMMDD",
+      "file_pattern": "*.csv"
+    }
+  ]
+}

@@ -1,6 +1,8 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -18,6 +20,7 @@
 body{
     background:#f5f7fb;
     padding:20px;
+    transition:0.3s;
 }
 
 .header{
@@ -26,6 +29,12 @@ body{
     border-radius:10px;
     box-shadow:0 2px 8px rgba(0,0,0,.1);
     margin-bottom:20px;
+}
+
+.header-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 
 .header h1{
@@ -43,13 +52,20 @@ body{
     background:#2563eb;
     color:white;
     padding:15px;
-    min-width:200px;
+    min-width:220px;
     border-radius:10px;
 }
 
 .card .value{
-    font-size:24px;
+    font-size:22px;
     font-weight:bold;
+}
+
+.nav-buttons{
+    margin-bottom:15px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
 }
 
 .toolbar{
@@ -74,6 +90,7 @@ body{
 .btn{
     background:#16a34a;
     color:white;
+    text-decoration:none;
     border:none;
     padding:10px 20px;
     border-radius:6px;
@@ -82,6 +99,10 @@ body{
 
 .btn:hover{
     background:#15803d;
+}
+
+.theme-btn{
+    background:#111827;
 }
 
 .table-container{
@@ -127,6 +148,49 @@ tbody tr:hover{
     color:#666;
 }
 
+/* DARK MODE */
+
+.dark-mode{
+    background:#111827;
+    color:white;
+}
+
+.dark-mode .header,
+.dark-mode .toolbar,
+.dark-mode .table-container{
+    background:#1f2937;
+    color:white;
+}
+
+.dark-mode table{
+    color:white;
+}
+
+.dark-mode tbody tr:hover{
+    background:#374151;
+}
+
+.dark-mode .search-box{
+    background:#374151;
+    color:white;
+    border:1px solid #555;
+}
+.nav-btn{
+    background:white;
+    color:#374151;
+    text-decoration:none;
+    padding:12px 25px;
+    border-radius:8px 8px 0 0;
+    border:1px solid #d1d5db;
+    border-bottom:none;
+    font-weight:600;
+}
+
+.nav-btn.active{
+    background:#2563eb;
+    color:white;
+   
+}
 </style>
 
 </head>
@@ -134,7 +198,19 @@ tbody tr:hover{
 
 <div class="header">
 
-    <h1>📊 Data Inventory Dashboard</h1>
+    <div class="header-top">
+
+        <h1>
+            📊 Data Inventory Dashboard - {{ report_type }}
+        </h1>
+
+        <button
+            class="btn theme-btn"
+            onclick="toggleTheme()">
+            🌙 Theme
+        </button>
+
+    </div>
 
     <div class="summary">
 
@@ -150,17 +226,37 @@ tbody tr:hover{
 
         <div class="card">
             <div>Last Updated</div>
-            <div class="value" style="font-size:16px">
+            <div class="value" style="font-size:14px">
                 {{ last_updated }}
             </div>
         </div>
-<div class="card">
-    <div>Next Scan</div>
-    <div class="value" style="font-size:16px">
-        {{ next_run }}
+
+        <div class="card">
+            <div>Next Scan</div>
+            <div class="value" style="font-size:14px">
+                {{ next_run }}
+            </div>
+        </div>
+
     </div>
+
 </div>
-    </div>
+
+<div class="nav-buttons">
+
+    <a
+        href="/"
+        class="nav-btn {% if report_type == 'FORMATTED' %}active{% endif %}"
+    >
+        📊 FORMATTED REPORT
+    </a>
+
+    <a
+        href="/raw"
+        class="nav-btn {% if report_type == 'RAW' %}active{% endif %}"
+    >
+        📂 RAW REPORT
+    </a>
 
 </div>
 
@@ -173,12 +269,25 @@ tbody tr:hover{
         placeholder="Search Dataset..."
     >
 
+    {% if report_type == "FORMATTED" %}
+
     <button
-    class="btn"
-    onclick="window.location='/scan';"
->
-    🔄 Run Scan
-</button>
+        class="btn"
+        onclick="window.location='/scan_formatted';">
+        🔄 Refresh Formatted
+    </button>
+
+    {% endif %}
+
+    {% if report_type == "RAW" %}
+
+    <button
+        class="btn"
+        onclick="window.location='/scan_raw';">
+        🔄 Refresh Raw
+    </button>
+
+    {% endif %}
 
 </div>
 
@@ -191,6 +300,7 @@ tbody tr:hover{
             <th>Folder 1</th>
             <th>Folder 2</th>
             <th>Folder 3</th>
+             <th>File Name</th>
             <th>From Date</th>
             <th>To Date</th>
             <th>No Of Files</th>
@@ -205,23 +315,29 @@ tbody tr:hover{
     <tr>
 
         <td>{{ row.folder1 }}</td>
-
         <td>{{ row.folder2 }}</td>
-
         <td>{{ row.folder3 }}</td>
-
+        <td>{{ row.file_name }}</td>
         <td>{{ row.from_date }}</td>
-
         <td>{{ row.to_date }}</td>
-
         <td>{{ row.file_count }}</td>
 
         <td>
+
             {% if row.file_count > 0 %}
-                <span class="status-ok">AVAILABLE</span>
+
+                <span class="status-ok">
+                    AVAILABLE
+                </span>
+
             {% else %}
-                <span class="status-warning">NO FILES</span>
+
+                <span class="status-warning">
+                    NO FILES
+                </span>
+
             {% endif %}
+
         </td>
 
     </tr>
@@ -245,35 +361,64 @@ tbody tr:hover{
 const searchInput =
 document.getElementById("searchInput");
 
-searchInput.addEventListener("keyup", function() {
+searchInput.addEventListener(
+    "keyup",
+    function(){
 
-    const filter =
-    this.value.toLowerCase();
+        const filter =
+        this.value.toLowerCase();
 
-    const rows =
-    document.querySelectorAll(
-        "#inventoryTable tbody tr"
+        const rows =
+        document.querySelectorAll(
+            "#inventoryTable tbody tr"
+        );
+
+        rows.forEach(row => {
+
+            const text =
+            row.innerText.toLowerCase();
+
+            row.style.display =
+                text.includes(filter)
+                ? ""
+                : "none";
+
+        });
+
+    }
+);
+
+function toggleTheme(){
+
+    document.body.classList.toggle(
+        "dark-mode"
     );
 
-    rows.forEach(row => {
+    localStorage.setItem(
+        "theme",
+        document.body.classList.contains(
+            "dark-mode"
+        )
+    );
+}
 
-        const text =
-        row.innerText.toLowerCase();
-
-        row.style.display =
-            text.includes(filter)
-            ? ""
-            : "none";
-
-    });
-
-});
+if(
+    localStorage.getItem("theme")
+    === "true"
+){
+    document.body.classList.add(
+        "dark-mode"
+    );
+}
 
 setInterval(() => {
+
     location.reload();
+
 }, 60000);
 
 </script>
 
 </body>
 </html>
+ 

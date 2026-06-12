@@ -1,0 +1,123 @@
+{
+  "root_folder": "G:/Ganesh/NEW RAW FILES",
+
+  "datasets": [
+    {
+      "folder1": "01_BSE_CM",
+      "folder2": "1_MINUTE",
+      "file_name_pattern": "RF_BSE_CM_INDICES_1M_YYYYMMDD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "01_BSE_CM",
+      "folder2": "EOD",
+      "file_name_pattern": "RF_BSE_CM_INDICES_EOD_YYYYMMDD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "02_BSE_FNO",
+      "folder2": "1_MINUTE",
+      "file_name_pattern": "RF_BSE_FNO_INDICES_1M_YYYYMMDD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "02_BSE_FNO",
+      "folder2": "EOD",
+      "file_name_pattern": "RF_BSE_FNO_INDICES_EOD_YYYYMMDD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "03_NSE_CM",
+      "folder2": "INDICES RAW FILES",
+      "folder3": "1_MINUTE",
+      "file_name_pattern": "RF_NSE_CM_INDICES_1M_YYYYMMDD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "03_NSE_CM",
+      "folder2": "INDICES RAW FILES",
+      "folder3": "EOD_OLD",
+      "file_name_pattern": "RF_NSE_CM_INDICES_EOD_YYYYMMDD",
+      "from_date_fixed": "19970401",
+      "to_date_fixed": "20170331",
+      "physical_folder": "EOD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "03_NSE_CM",
+      "folder2": "INDICES RAW FILES",
+      "folder3": "EOD_NEW",
+      "file_name_pattern": "RF_NSE_CM_INDICES_EOD_YYYYMMDD",
+      "from_date_fixed": "20170401",
+      "physical_folder": "EOD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "03_NSE_CM",
+      "folder2": "STOCK RAW FILES",
+      "folder3": "1_MINUTE",
+     "file_name_pattern": "RF_NSE_CM_STOCKS_1M_YYYYMMDD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "03_NSE_CM",
+      "folder2": "STOCK RAW FILES",
+      "folder3": "EOD_OLD",
+      "file_name_pattern": "RF_NSE_CM_STOCKS_EOD_YYYYMMDD",
+      "from_date_fixed": "19970401",
+      "to_date_fixed": "20170331",
+      "physical_folder": "EOD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "03_NSE_CM",
+      "folder2": "STOCK RAW FILES",
+      "folder3": "EOD_NEW",
+      "file_name_pattern": "RF_NSE_CM_STOCKS_EOD_YYYYMMDD",
+      "from_date_fixed": "20170401",
+      "physical_folder": "EOD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "04_NSE_FNO",
+      "folder2": "RAW FILES",
+      "folder3": "1_MINUTE",
+      "file_name_pattern": "RF_NSE_FNO_1M_YYYYMMDD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "04_NSE_FNO",
+      "folder2": "RAW FILES",
+      "folder3": "EOD",
+      "file_name_pattern": "RF_NSE_FNO_EOD_YYYYMMDD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "05_MCX",
+      "folder2": "MCX RAW FILES",
+      "folder3": "1_MINUTE",
+      "file_name_pattern": "RF_MCX_1M_YYYYMMDD",
+      "file_pattern": "*.csv"
+    },
+
+    {
+      "folder1": "05_MCX",
+      "folder2": "MCX RAW FILES",
+      "folder3": "EOD",
+      "file_name_pattern": "RF_MCX_EOD_YYYYMMDD",
+      "file_pattern": "*.csv"
+    }
+  ]
+}

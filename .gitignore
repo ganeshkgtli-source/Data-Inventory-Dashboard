@@ -1,58 +1,42 @@
 # Python
-
-**pycache**/
+__pycache__/
 *.pyc
 *.pyo
 *.pyd
 
 # Virtual Environment
-
 venv/
 .env
 
-# SQLite Database
-
-inventory.db
-*.db
-
-# Logs
-
-logs/
-*.log
-
-# Generated Reports
-
-reports/
-*.xlsx
-
-# Generated Dashboard Excel
-
-Data_Inventory_Dashboard.xlsx
-
 # PyInstaller
-
 build/
 dist/
 *.spec
 
-# VS Code
+# Logs
+logs/
+*.log
 
+# Reports
+reports/
+*.xlsx
+
+# SQLite Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# VS Code
 .vscode/
 
-# JetBrains
-
-.idea/
-
-# Windows
-
-Thumbs.db
-Desktop.ini
-
 # OS Files
-
 .DS_Store
+Thumbs.db
 
-# Temporary Files
+# Generated EXE Runtime Files
+dist/logs/
+dist/reports/
+dist/*.db
 
-*.tmp
-*.bak
+# Local Config Overrides
+config_local.json
